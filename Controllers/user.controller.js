@@ -1,3 +1,10 @@
+const cloudinary = require('cloudinary')
+          
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET 
+});
 const userModel = require("../Models/user.model");
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -68,4 +75,17 @@ const getDashboard = (req,res)=>{
       }
   })
 }
-module.exports = {userWelcome,userSignUp,userSignIn,getDashboard}
+const uploadFile=(req,res)=>{
+   // console.log(req.body.file);
+   // res.send(req.file);
+   cloudinary.v2.uploader.upload(req.body.file,(err, result)=>{
+      if (err) {
+         console.log(err);
+      } else{
+         // console.log(result);
+         let myImage = result.secure_url
+         res.send({status: true, message: 'File Uploaded Successfully', myImage})
+      }
+   });
+}
+module.exports = {userWelcome,userSignUp,userSignIn,getDashboard,uploadFile}
